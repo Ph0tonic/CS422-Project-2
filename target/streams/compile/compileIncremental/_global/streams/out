@@ -1,0 +1,6 @@
+[debug] [zinc] IncrementalCompile -----------
+[debug] IncrementalCompile.incrementalCompile
+[debug] previous = Stamps for: 16 products, 9 sources, 3 libraries
+[debug] current source = Set(${BASE}/src/main/scala/lsh/Main.scala, ${BASE}/src/main/scala/lsh/ExactNN.scala, ${BASE}/src/main/scala/lsh/BaseConstructionBroadcast.scala, ${BASE}/src/main/scala/lsh/Construction.scala, ${BASE}/src/main/scala/lsh/BaseConstruction.scala, ${BASE}/src/main/scala/lsh/BaseConstructionBalanced.scala, ${BASE}/src/main/scala/lsh/MinHash.scala, ${BASE}/src/main/scala/lsh/ORConstruction.scala, ${BASE}/src/main/scala/lsh/ANDConstruction.scala)
+[debug] > initialChanges = InitialChanges(Changes(added = Set(), removed = Set(), changed = Set(), unmodified = ...),Set(),Set(),API Changes: Set())
+[debug] No changes

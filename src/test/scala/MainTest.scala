@@ -5,8 +5,6 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.scalatest.FunSuite
 
-
-
 class MainTest extends FunSuite {
   val master = "local[*]"
   val spark = SparkSession.builder.appName("Project2").master(master).getOrCreate

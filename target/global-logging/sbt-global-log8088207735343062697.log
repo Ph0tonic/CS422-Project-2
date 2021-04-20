@@ -1,0 +1,19 @@
+[debug] > Exec(all {file:/D:/Projects/CS422-Project-2-bwermeil/}cs422-project-2-bwermeil/products {file:/D:/Projects/CS422-Project-2-bwermeil/}cs422-project-2-bwermeil/test:products, None, None)
+[debug] Evaluating tasks: Compile / products, Test / products
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[warn] There may be incompatibilities among your library dependencies; run 'evicted' to see detailed eviction warnings.
+[info] compiling 9 Scala sources to D:\Projects\CS422-Project-2-bwermeil\target\scala-2.11\classes ...
+[info] Non-compiled module 'compiler-bridge_2.11' for Scala 2.11.8. Compiling...
+[info]   Compilation completed in 13.06s.
+[warn] there was one deprecation warning; re-run with -deprecation for details
+[warn] one warning found
+[info] done compiling
+[info] compiling 1 Scala source to D:\Projects\CS422-Project-2-bwermeil\target\scala-2.11\test-classes ...
+[warn] there was one deprecation warning; re-run with -deprecation for details
+[warn] one warning found
+[info] done compiling
+[debug] Forcing garbage collection...
+[success] Total time: 54 s, completed 15 avr. 2021 12:05:35
+[debug] > Exec(idea-shell, None, None)
+[debug] > Exec(, None, None)
+[debug] > Exec(idea-shell, None, None)
