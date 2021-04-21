@@ -13,7 +13,7 @@ class BaseConstruction(sqlContext: SQLContext, data: RDD[(String, List[String])]
       .execute(queries)
       .map{ case (a,b) => (b,a) }
 
-    //TODO: minhash + shuffling
+    //TODO: shuffling
     buckets.rightOuterJoin(minQueries)
       .map{ case (key,(movies, query)) => (query, movies.getOrElse(Set.empty).toSet)}
       .filter(_._2.nonEmpty)
