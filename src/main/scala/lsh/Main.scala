@@ -38,16 +38,30 @@ object Main {
     avg_precision
   }
 
-  def construction1(SQLContext: SQLContext, rdd_corpus : RDD[(String, List[String])]) : Construction = {
+  def construction1(sqlContext: SQLContext, rdd_corpus : RDD[(String, List[String])]) : Construction = {
     //implement construction1 composition here
     // Target precision > 0.94
-    null
+
+    new ANDConstruction(List(
+      new BaseConstruction(sqlContext, rdd_corpus, 120),
+      new BaseConstruction(sqlContext, rdd_corpus, 121),
+      new BaseConstruction(sqlContext, rdd_corpus, 122),
+      new BaseConstruction(sqlContext, rdd_corpus, 123),
+      new BaseConstruction(sqlContext, rdd_corpus, 124)
+    ))
   }
 
-  def construction2(SQLContext: SQLContext, rdd_corpus : RDD[(String, List[String])]) : Construction = {
+  def construction2(sqlContext: SQLContext, rdd_corpus : RDD[(String, List[String])]) : Construction = {
     //implement construction2 composition here
     // Target recall > 0.94
-    null
+
+    new ORConstruction(List(
+      new BaseConstruction(sqlContext, rdd_corpus, 120),
+      new BaseConstruction(sqlContext, rdd_corpus, 121),
+      new BaseConstruction(sqlContext, rdd_corpus, 122),
+      new BaseConstruction(sqlContext, rdd_corpus, 123),
+      new BaseConstruction(sqlContext, rdd_corpus, 124)
+    ))
   }
 
   def main(args: Array[String]) {
