@@ -1,5 +1,6 @@
 package lsh
 
+import org.apache.spark.HashPartitioner
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 
@@ -8,6 +9,40 @@ import scala.collection.mutable
 class BaseConstructionBalanced(sqlContext: SQLContext, data: RDD[(String, List[String])], seed: Int, partitions: Int) extends Construction {
   //build buckets here
   val buckets = new MinHash(seed).execute(data).map { case (a, b) => (b, a) }.groupByKey().cache()
+
+  buckets.count()
+
+  override def eval(queries: RDD[(String, List[String])]): RDD[(String, Set[String])] = {
+    //compute near neighbors with load balancing here
+    val minQueries = new MinHash(seed)
+      .execute(queries)
+      .cache()
+
+    val parts: Array[Int] = computePartitions(computeMinHashHistogram(minQueries))
+
+    val partitionnedBucket = buckets.map {
+      case (id, movie) => (parts.foldLeft(0)(
+        (acc, r) => if (r < id) acc + 1 else acc
+      ), (id, movie))
+    }
+
+    minQueries
+      .map {
+        case (query, id) => (parts.foldLeft(0)(
+          (acc, r) => if (r < id) acc + 1 else acc
+        ), (id, query))
+      }
+      .partitionBy(new HashPartitioner(partitions))
+      .leftOuterJoin(partitionnedBucket)
+      .filter {
+        case (bucketId, ((id1, query), Some((id2, movies)))) => id1 == id2
+        case (bucketId, ((id1, query), None)) => true
+      }
+      .mapValues{
+        case ((id, query), Some((_, movies))) => (query, movies.toSet)
+        case ((id, query), None) => (query, Set.empty[String])
+      }.values
+  }
 
   def computeMinHashHistogram(queries: RDD[(String, Int)]): Array[(Int, Int)] = {
     //compute histogram for target buckets of queries
@@ -22,30 +57,16 @@ class BaseConstructionBalanced(sqlContext: SQLContext, data: RDD[(String, List[S
   def computePartitions(histogram: Array[(Int, Int)]): Array[Int] = {
     //compute the boundaries of bucket partitions
     var count = 0
-    val total = histogram.foldLeft(0)(_+_._2)
-    val maxNb = Math.ceil(total/partitions)
+    val total = histogram.foldLeft(0)(_ + _._2)
+    val maxNb = Math.ceil(total / partitions)
     val data = new mutable.ArrayBuilder.ofInt
-    data += 0
-
     for ((index, nb) <- histogram) {
       count += nb
-      if(count > maxNb) {
+      if (count > maxNb) {
         data += index
         count = 0
       }
     }
     data.result()
-  }
-
-  override def eval(queries: RDD[(String, List[String])]): RDD[(String, Set[String])] = {
-    //compute near neighbors with load balancing here
-    val minQueries = new MinHash(seed)
-      .execute(queries)
-      .map{ case (a,b) => (b,a) }
-
-    //TODO: shuffling
-    buckets.rightOuterJoin(minQueries)
-      .map{ case (key,(movies, query)) => (query, movies.getOrElse(Set.empty).toSet)}
-      .filter(_._2.nonEmpty)
   }
 }

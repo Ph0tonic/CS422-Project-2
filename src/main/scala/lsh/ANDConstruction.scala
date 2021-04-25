@@ -1,9 +1,13 @@
 package lsh
+
 import org.apache.spark.rdd.RDD
 
 class ANDConstruction(children: List[Construction]) extends Construction {
-  override def eval(rdd: RDD[(String, List[String])]): RDD[(String, Set[String])] = {
-    //compute AND construction results here
-    children.map(_.eval(rdd)).reduce(_ union _).reduceByKey(_ intersect _)
+  override def eval(queries: RDD[(String, List[String])]): RDD[(String, Set[String])] = {
+    children
+      .map(_.eval(queries.zipWithIndex().map{ case ((key, value), index) => (key+"|"+index,value) }))
+      .reduce(_ union _)
+      .reduceByKey(_ intersect _)
+      .map { case (key, value) => (key.split("\\|").head, value)}
   }
 }

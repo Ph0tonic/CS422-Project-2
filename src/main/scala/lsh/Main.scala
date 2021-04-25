@@ -40,13 +40,13 @@ object Main {
 
   def construction1(SQLContext: SQLContext, rdd_corpus : RDD[(String, List[String])]) : Construction = {
     //implement construction1 composition here
-
+    // Target precision > 0.94
     null
   }
 
   def construction2(SQLContext: SQLContext, rdd_corpus : RDD[(String, List[String])]) : Construction = {
     //implement construction2 composition here
-
+    // Target recall > 0.94
     null
   }
 
