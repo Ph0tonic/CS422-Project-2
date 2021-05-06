@@ -6,7 +6,7 @@ import org.apache.spark.sql.SQLContext
 
 import scala.collection.mutable
 
-class BaseConstructionBalanced(sqlContext: SQLContext, data: RDD[(String, List[String])], seed: Int, partitions: Int) extends Construction {
+class BaseConstructionBalanced(sqlContext: SQLContext, data: RDD[(String, List[String])], seed: Int, nbPartitions: Int) extends Construction {
   //build buckets here
   val buckets = new MinHash(seed).execute(data).map { case (a, b) => (b, a) }.groupByKey().cache()
 
@@ -32,7 +32,7 @@ class BaseConstructionBalanced(sqlContext: SQLContext, data: RDD[(String, List[S
           (acc, r) => if (r < id) acc + 1 else acc
         ), (id, query))
       }
-      .partitionBy(new HashPartitioner(partitions))
+      .partitionBy(new HashPartitioner(nbPartitions))
       .leftOuterJoin(partitionnedBucket)
       .filter {
         case (bucketId, ((id1, query), Some((id2, movies)))) => id1 == id2
@@ -58,7 +58,7 @@ class BaseConstructionBalanced(sqlContext: SQLContext, data: RDD[(String, List[S
     //compute the boundaries of bucket partitions
     var count = 0
     val total = histogram.foldLeft(0)(_ + _._2)
-    val maxNb = Math.ceil(total / partitions)
+    val maxNb = Math.ceil(total / nbPartitions)
     val data = new mutable.ArrayBuilder.ofInt
     for ((index, nb) <- histogram) {
       count += nb

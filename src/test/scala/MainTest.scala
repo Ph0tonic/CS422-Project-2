@@ -1,13 +1,17 @@
 import java.io.File
-
 import lsh._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
+import org.junit.{Before, BeforeClass}
 import org.scalatest.FunSuite
+
+
 
 class MainTest extends FunSuite {
   val master = "local[*]"
   val spark = SparkSession.builder.appName("Project2").master(master).getOrCreate
+
+//  System.setProperty("hadoop.home.dir", "D:\\Projects\\CS422-Project-2-bwermeil\\")
 
   //@Test
   test("MinHash") {
@@ -309,14 +313,14 @@ class MainTest extends FunSuite {
   }
 
   test("Simple vs BCast") {
-    val corpus_file = new File(getClass.getResource("/corpus-1.csv/part-00000").getFile).getPath
+    val corpus_file = new File(getClass.getResource("/corpus-10.csv/part-00000").getFile).getPath
 
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
       .map(x => x.toString.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
 
-    val query_file = new File(getClass.getResource("/queries-1-10.csv/part-00000").getFile).getPath
+    val query_file = new File(getClass.getResource("/queries-10-10.csv/part-00000").getFile).getPath
 
     val rdd_query = spark.sparkContext
       .textFile(query_file)
@@ -324,25 +328,27 @@ class MainTest extends FunSuite {
       .map(x => (x(0), x.slice(1, x.size).toList))
 
     val lsh1 =  new BaseConstruction(spark.sqlContext, rdd_corpus, 42)
-    val lsh2 =  new BaseConstructionBroadcast(spark.sqlContext, rdd_corpus, 43)
+    val lsh2 =  new BaseConstructionBalanced(spark.sqlContext, rdd_corpus, 42, 8)
+    val lsh3 =  new BaseConstructionBroadcast(spark.sqlContext, rdd_corpus, 43)
 
     val t1 = System.nanoTime
-
     val res1 = lsh1.eval(rdd_query).count()
-
     val duration1 = (System.nanoTime - t1) / 1e9d
 
     val t2 = System.nanoTime
-
     val res2 = lsh2.eval(rdd_query).count()
-
     val duration2 = (System.nanoTime - t2) / 1e9d
+
+    val t3 = System.nanoTime
+    val res3 = lsh3.eval(rdd_query).count()
+    val duration3 = (System.nanoTime - t3) / 1e9d
 
     println(duration1)
     println(duration2)
+    println(duration3)
 
-    assert(res1 == res2)
-    assert(duration1 > 1.5*duration2)
+    assert(res1 == res3)
+    assert(duration1 > 1.5*duration3)
   }
 
   //@Test

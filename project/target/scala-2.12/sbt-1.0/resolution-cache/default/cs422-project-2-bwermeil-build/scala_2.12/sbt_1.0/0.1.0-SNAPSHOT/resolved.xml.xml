@@ -4,7 +4,7 @@
 		module="cs422-project-2-bwermeil-build"
 		revision="0.1.0-SNAPSHOT"
 		status="integration"
-		publication="20210415111241"
+		publication="20210506093543"
 		e:sbtVersion="1.0" e:scalaVersion="2.12"
 	>
 		<description>
