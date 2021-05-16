@@ -5,7 +5,7 @@ Sciper : 308542
 Date : 06.05.2021
 
 ## 8 - Performance evaluation
-As asked during the exercice session, I simply ran my test with a single corpus set `10` and query set `10-2` which gave me the following results:
+As asked during the exercice session if I needed to run the test for every corpus or if I could only run it for corpus 10 and it was told to me that it was ok to simply use corpus 10. I simply ran my test with a single corpus set `10` and query set `10-2` which gave me the following results:
 - `ExactNN` : NaN
 - `BaseConstruction` : 2.11
 - `BaseConstructionBalanced` : 4.33

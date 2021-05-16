@@ -17,6 +17,5 @@ class BaseConstruction(sqlContext: SQLContext, data: RDD[(String, List[String])]
 
     minQueries.leftOuterJoin(buckets)
       .map{ case (_,(query, movies)) => (query, movies.getOrElse(Set.empty).toSet)}
-//      .filter(_._2.nonEmpty)
   }
 }

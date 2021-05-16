@@ -6,7 +6,7 @@ import org.apache.spark.sql.SQLContext
 class ExactNN(sqlContext: SQLContext, data: RDD[(String, List[String])], threshold : Double) extends Construction with Serializable {
 
   // data = movies
-  val movies = data.mapValues(_.toSet).cache()
+  val movies: RDD[(String, Set[String])] = data.mapValues(_.toSet).cache()
 
   override def eval(queries: RDD[(String, List[String])]): RDD[(String, Set[String])] = {
     // compute exact near neighbors here

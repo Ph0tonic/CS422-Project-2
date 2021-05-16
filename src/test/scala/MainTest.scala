@@ -156,14 +156,14 @@ class MainTest extends FunSuite {
 
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
 
     val query_file = new File(getClass.getResource("/queries-1-2.csv/part-00000").getFile).getPath
 
     val rdd_query = spark.sparkContext
       .textFile(query_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
       .sample(false, 0.05)
 
@@ -186,14 +186,14 @@ class MainTest extends FunSuite {
 
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
 
     val query_file = new File(getClass.getResource("/queries-1-2.csv/part-00000").getFile).getPath
 
     val rdd_query = spark.sparkContext
       .textFile(query_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
       .sample(false, 0.05)
 
@@ -216,14 +216,14 @@ class MainTest extends FunSuite {
 
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
 
     val query_file = new File(getClass.getResource("/queries-1-2.csv/part-00000").getFile).getPath
 
     val rdd_query = spark.sparkContext
       .textFile(query_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
       .sample(false, 0.05)
 
@@ -246,14 +246,14 @@ class MainTest extends FunSuite {
 
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
 
     val query_file = new File(getClass.getResource("/queries-10-2.csv/part-00000").getFile).getPath
 
     val rdd_query_collect = spark.sparkContext
       .textFile(query_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
       .collect()
 
@@ -282,14 +282,14 @@ class MainTest extends FunSuite {
 
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
 
     val query_file = new File(getClass.getResource("/queries-10-2.csv/part-00000").getFile).getPath
 
     val rdd_query_collect = spark.sparkContext
       .textFile(query_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
       .collect()
 
@@ -317,15 +317,15 @@ class MainTest extends FunSuite {
 
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
-      .map(x => x.toString.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => x.split('|'))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val query_file = new File(getClass.getResource("/queries-10-10.csv/part-00000").getFile).getPath
 
     val rdd_query = spark.sparkContext
       .textFile(query_file)
-      .map(x => x.toString.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => x.split('|'))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val lsh1 =  new BaseConstruction(spark.sqlContext, rdd_corpus, 42)
     val lsh2 =  new BaseConstructionBalanced(spark.sqlContext, rdd_corpus, 42, 8)
@@ -343,9 +343,9 @@ class MainTest extends FunSuite {
     val res3 = lsh3.eval(rdd_query).count()
     val duration3 = (System.nanoTime - t3) / 1e9d
 
-    println(duration1)
-    println(duration2)
-    println(duration3)
+    println("Base construct : ", duration1)
+    println("Base construct Balanced : ", duration2)
+    println("Base construct Broadcast : ", duration3)
 
     assert(res1 == res3)
     assert(duration1 > 1.5*duration3)
@@ -357,14 +357,14 @@ class MainTest extends FunSuite {
 
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
 
     val query_file = new File(getClass.getResource("/queries-10-2.csv/part-00000").getFile).getPath
 
     val rdd_query_collect = spark.sparkContext
       .textFile(query_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
       .collect()
 
@@ -386,14 +386,14 @@ class MainTest extends FunSuite {
 
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
 
     val query_file = new File(getClass.getResource("/queries-10-2.csv/part-00000").getFile).getPath
 
     val rdd_query_collect = spark.sparkContext
       .textFile(query_file)
-      .map(x => x.toString.split('|'))
+      .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.size).toList))
       .collect()
 
