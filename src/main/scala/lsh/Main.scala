@@ -67,7 +67,7 @@ object Main {
   }
 
   def main(args: Array[String]) {
-//    System.setProperty("hadoop.home.dir", "D:\\Projects\\CS422-Project-2-bwermeil\\")
+    System.setProperty("hadoop.home.dir", "D:\\Projects\\CS422-Project-2-bwermeil\\")
 
     val conf = new SparkConf().setAppName("app").setMaster("local[*]")
     val sc = SparkContext.getOrCreate(conf)
@@ -75,15 +75,16 @@ object Main {
 
     //type your queries here
     val root = "hdfs://iccluster041.iccluster.epfl.ch:8020/cs422-data/"
-
-    val corpus_file = root + "/corpus-10.csv/part-00000"
+    val corpus_file = new File(getClass.getResource("/corpus-10.csv/part-00000").getFile).getPath
+//    val corpus_file = root + "/corpus-10.csv/part-00000"
 
     val rdd_corpus = sc
       .textFile(corpus_file)
       .map(x => x.split('|'))
       .map(x => (x(0), x.slice(1, x.length).toList))
 
-    val query_file = root + "/queries-10-2.csv/part-00000"
+    val query_file = new File(getClass.getResource("/queries-10-2.csv/part-00000").getFile).getPath
+//    val query_file = root + "/queries-10-2.csv/part-00000"
 
     val rdd_query = sc
       .textFile(query_file)
@@ -91,16 +92,39 @@ object Main {
       .map(x => (x(0), x.slice(1, x.length).toList))
       .sample(withReplacement = false, 0.05)
 
-    val exact = new ExactNN(sqlContext, rdd_corpus, 0.3)
-    val lsh =  new BaseConstruction(sqlContext, rdd_corpus, 42)
+//    val exact = new ExactNN(sqlContext, rdd_corpus, 0.3)
+//    val lsh =  new BaseConstruction(sqlContext, rdd_corpus, 42)
+//
+//    val ground = exact.eval(rdd_query)
+//    val res = lsh.eval(rdd_query)
 
-    val ground = exact.eval(rdd_query)
-    val res = lsh.eval(rdd_query)
+    // ExactNN
 
-    assert(Main.recall(ground, res) >= 0.8)
-    assert(Main.precision(ground, res) >= 0.9)
+    // data = movies
+    val movies: RDD[(String, Set[String])] = rdd_corpus.mapValues(_.toSet).cache()
 
-    assert(res.count() == rdd_query.count())
+//    val threshold = 0.55
+    // compute exact near neighbors here
+    val temp = rdd_query
+      .mapValues(_.toSet)
+      .cartesian(movies)
+      .map { case ((key, searchKeyWords), (movie, keyWords)) =>
+        searchKeyWords.intersect(keyWords).size.doubleValue() / searchKeyWords.union(keyWords).size.doubleValue()
+      }
+      .filter(!_.isInfinity)
+      .cache()
+
+    for(i <- 0 to 100 by 5) {
+      val threshold = i.doubleValue()
+      val temp2 = temp.filter(dist => dist >= threshold/100).cache()
+      val dist = temp2.sum() / temp2.count()
+      println("Distance calculated ", i , " : ", dist)
+    }
+
+//    assert(Main.recall(ground, res) >= 0.8)
+//    assert(Main.precision(ground, res) >= 0.9)
+//
+//    assert(res.count() == rdd_query.count())
 
     println("SUCCESSFUL RUN")
   }     

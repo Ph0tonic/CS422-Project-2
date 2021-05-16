@@ -5,7 +5,7 @@ import org.apache.spark.sql.SQLContext
 
 class BaseConstruction(sqlContext: SQLContext, data: RDD[(String, List[String])], seed : Int) extends Construction {
   //build buckets here
-  val buckets = new MinHash(seed).execute(data).map{ case (a,b) => (b,a) }.groupByKey().cache()
+  val buckets: RDD[(Int, Iterable[String])] = new MinHash(seed).execute(data).map{ case (a,b) => (b,a) }.groupByKey().cache()
   buckets.count()
 
   override def eval(queries: RDD[(String, List[String])]): RDD[(String, Set[String])] = {

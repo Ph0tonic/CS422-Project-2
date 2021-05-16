@@ -17,6 +17,9 @@ Here is the graph of the resulting graph for the query :
 
 ![graph](img/graph.png)
 
-Regarding the average distance of each query point from each nearest neighbours, here are the result I got :
+Regarding the average distance of each query point from each nearest neighbours, I calculated it with multiple threshold and here are the results :
 
-TODO
+![graph](img/graph_2.png)
+
+As we can see, we can get very good results with a resonable threshold of 0.55, this is enough with a precision of 0.97 for this value.
+It's therefore beneficial to use an approximation instead of exact to have some strong results which could offer more realistic data.
