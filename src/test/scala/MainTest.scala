@@ -9,7 +9,7 @@ import org.scalatest.FunSuite
 
 class MainTest extends FunSuite {
   val master = "local[*]"
-  val spark = SparkSession.builder.appName("Project2").master(master).getOrCreate
+  val spark: SparkSession = SparkSession.builder.appName("Project2").master(master).getOrCreate
 
 //  System.setProperty("hadoop.home.dir", "D:\\Projects\\CS422-Project-2-bwermeil\\")
 
@@ -24,7 +24,7 @@ class MainTest extends FunSuite {
 
     val rdd = input
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val minHash21 = new MinHash(21)
     val minHash22 = new MinHash(22)
@@ -85,7 +85,7 @@ class MainTest extends FunSuite {
 
     val rdd = input
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val bc = new BaseConstruction(spark.sqlContext, rdd, 42)
     val res = bc.eval(rdd)
@@ -104,7 +104,7 @@ class MainTest extends FunSuite {
 
     val rdd = input
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val bc = new BaseConstructionBroadcast(spark.sqlContext, rdd, 42)
     val res = bc.eval(rdd)
@@ -123,7 +123,7 @@ class MainTest extends FunSuite {
 
     val rdd = input
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val bc = new BaseConstructionBalanced(spark.sqlContext, rdd, 42, 8)
     val res = bc.eval(rdd)
@@ -142,7 +142,7 @@ class MainTest extends FunSuite {
 
     val rdd = input
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val bc = new ExactNN(spark.sqlContext, rdd, 0.7)
     val res = bc.eval(rdd)
@@ -157,15 +157,15 @@ class MainTest extends FunSuite {
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val query_file = new File(getClass.getResource("/queries-1-2.csv/part-00000").getFile).getPath
 
     val rdd_query = spark.sparkContext
       .textFile(query_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
-      .sample(false, 0.05)
+      .map(x => (x(0), x.slice(1, x.length).toList))
+      .sample(withReplacement = false, 0.05)
 
     val exact = new ExactNN(spark.sqlContext, rdd_corpus, 0.3)
 
@@ -187,15 +187,15 @@ class MainTest extends FunSuite {
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val query_file = new File(getClass.getResource("/queries-1-2.csv/part-00000").getFile).getPath
 
     val rdd_query = spark.sparkContext
       .textFile(query_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
-      .sample(false, 0.05)
+      .map(x => (x(0), x.slice(1, x.length).toList))
+      .sample(withReplacement = false, 0.05)
 
     val exact = new ExactNN(spark.sqlContext, rdd_corpus, 0.3)
 
@@ -217,15 +217,15 @@ class MainTest extends FunSuite {
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val query_file = new File(getClass.getResource("/queries-1-2.csv/part-00000").getFile).getPath
 
     val rdd_query = spark.sparkContext
       .textFile(query_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
-      .sample(false, 0.05)
+      .map(x => (x(0), x.slice(1, x.length).toList))
+      .sample(withReplacement = false, 0.05)
 
     val exact = new ExactNN(spark.sqlContext, rdd_corpus, 0.3)
 
@@ -247,14 +247,14 @@ class MainTest extends FunSuite {
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val query_file = new File(getClass.getResource("/queries-10-2.csv/part-00000").getFile).getPath
 
     val rdd_query_collect = spark.sparkContext
       .textFile(query_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
       .collect()
 
     val rdd_query = spark.sparkContext.parallelize(rdd_query_collect.slice(0, rdd_query_collect.size/1000))
@@ -283,14 +283,14 @@ class MainTest extends FunSuite {
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val query_file = new File(getClass.getResource("/queries-10-2.csv/part-00000").getFile).getPath
 
     val rdd_query_collect = spark.sparkContext
       .textFile(query_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
       .collect()
 
     val rdd_query = spark.sparkContext.parallelize(rdd_query_collect.slice(0, rdd_query_collect.size/1000))
@@ -358,17 +358,17 @@ class MainTest extends FunSuite {
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val query_file = new File(getClass.getResource("/queries-10-2.csv/part-00000").getFile).getPath
 
     val rdd_query_collect = spark.sparkContext
       .textFile(query_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
       .collect()
 
-    val rdd_query = spark.sparkContext.parallelize(rdd_query_collect.slice(0, rdd_query_collect.size/1000))
+    val rdd_query = spark.sparkContext.parallelize(rdd_query_collect.slice(0, rdd_query_collect.length/1000))
 
     val exact = new ExactNN(spark.sqlContext, rdd_corpus, 0.3)
 
@@ -387,17 +387,17 @@ class MainTest extends FunSuite {
     val rdd_corpus = spark.sparkContext
       .textFile(corpus_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
 
     val query_file = new File(getClass.getResource("/queries-10-2.csv/part-00000").getFile).getPath
 
     val rdd_query_collect = spark.sparkContext
       .textFile(query_file)
       .map(x => x.split('|'))
-      .map(x => (x(0), x.slice(1, x.size).toList))
+      .map(x => (x(0), x.slice(1, x.length).toList))
       .collect()
 
-    val rdd_query = spark.sparkContext.parallelize(rdd_query_collect.slice(0, rdd_query_collect.size/1000))
+    val rdd_query = spark.sparkContext.parallelize(rdd_query_collect.slice(0, rdd_query_collect.length/1000))
 
     val exact = new ExactNN(spark.sqlContext, rdd_corpus, 0.3)
 
